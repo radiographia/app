@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f7fb">
+  <meta name="description" content="Каталог авторских инструментов для врачебной диктовки и подготовки медицинских документов.">
+  <title>Врачебный диктовщик — каталог проектов</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="./js/app.js" defer></script>
+</head>
+<body>
+  <header class="hero">
+    <div class="container">
+      <p class="eyebrow">КАТАЛОГ АВТОРСКИХ РАЗРАБОТОК</p>
+      <h1>Врачебный диктовщик</h1>
+      <p class="subtitle">Инструменты для медицинской диктовки, обработки текста и подготовки документов.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <label class="search-label" for="search">Найти проект</label>
+    <input id="search" class="search" type="search" placeholder="Название, описание или категория">
+
+    <nav id="categories" class="categories" aria-label="Категории"></nav>
+    <p id="status" class="status" role="status">Загрузка каталога…</p>
+    <section id="projects" class="projects" aria-label="Проекты"></section>
+
+    <footer>
+      Каталог авторских инструментов для врачей.
+      <p>Перед использованием проверяйте условия обработки медицинских данных.</p>
+    </footer>
+  </main>
+</body>
+</html>
