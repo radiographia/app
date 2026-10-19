@@ -9,12 +9,12 @@
     "image": ""
   },
   {
-    "id": "demo-editor",
-    "title": "Пример: редактор протоколов",
-    "description": "Демонстрационная карточка инструмента для обработки медицинских документов.",
-    "category": "Обработка текста",
-    "url": "https://example.org",
-    "author": "Автор проекта",
+    "id": "dicom-editor",
+    "title": "Радиологический плеер для сайта",
+    "description": "Способ преобразования dicom-серий в mp3 для web-демонстрации с помощью кастомного плеера",
+    "category": "dicom",
+    "url": "https://radiographia.github.io/ai/#player",
+    "author": "Yury Molgachev",
     "image": ""
   }
 ]
