@@ -1,11 +1,11 @@
 [
   {
     "id": "demo-dictation",
-    "title": "Пример: медицинская диктовка",
-    "description": "Демонстрационная карточка. Замените описание и ссылку на реальный проект.",
+    "title": "Медицинская диктовка",
+    "description": "Пример диктовки с помощью GigaAM в редакторе Word с установленным плагином ChatGPT для нормализации текста",
     "category": "Диктовка",
-    "url": "https://example.com",
-    "author": "Автор проекта",
+    "url": "t.me/Radiology_AI_Lab/1/4519",
+    "author": "Yury Molgachev",
     "image": ""
   },
   {
