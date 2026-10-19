@@ -9,9 +9,9 @@
     "image": ""
   },
   {
-    "id": "dicom-editor",
+    "id": "mp4-video",
     "title": "Радиологический плеер для сайта",
-    "description": "Способ преобразования dicom-серий в mp3 для web-демонстрации с помощью кастомного плеера",
+    "description": "Способ преобразования dicom-серий в mp4-video для web-демонстрации с помощью кастомного плеера",
     "category": "dicom",
     "url": "https://radiographia.github.io/ai/#player",
     "author": "Yury Molgachev",
