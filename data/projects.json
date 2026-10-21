@@ -12,8 +12,17 @@
     "id": "mp4-video",
     "title": "Радиологический плеер для сайта",
     "description": "Способ преобразования dicom-серий в mp4-video для web-демонстрации с помощью кастомного плеера",
-    "category": "dicom",
+    "category": "Dicom",
     "url": "https://radiographia.github.io/ai/#player",
+    "author": "Yury Molgachev",
+    "image": ""
+  },
+  {
+    "id": "editors",
+    "title": "Текстовые редакторы для врачей",
+    "description": "Быстрые и легкие текстовые редакторы с шаблонами, автозаменами и Intellisense-дополнениями",
+    "category": "Editors",
+    "url": "https://t.me/Radiology_AI_Lab/4025/4895",
     "author": "Yury Molgachev",
     "image": ""
   }
