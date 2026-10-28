@@ -18,6 +18,15 @@
     "image": ""
   },
   {
+    "id": "dictophone",
+    "title": "Локальный диктовщик для радиологов",
+    "description": "Локальный диктовщик на русском для радиологов",
+    "category": "dictation",
+    "url": "https://t.me/radvibelab/18", 
+    "author": "Roman (@alterdoctor)",
+    "image": ""
+  },
+  {
     "id": "editors",
     "title": "Текстовые редакторы для врачей",
     "description": "Быстрые и легкие текстовые редакторы с шаблонами, автозаменами и Intellisense-дополнениями",
