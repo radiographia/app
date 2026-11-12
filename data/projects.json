@@ -3,7 +3,7 @@
     "id": "demo-dictation",
     "title": "Медицинская диктовка",
     "description": "Пример диктовки с помощью GigaAM в редакторе Word с установленным плагином ChatGPT для нормализации текста",
-    "category": "Диктовка",
+    "category": "Голосовой ввод и диктовка",
     "url": "https://t.me/Radiology_AI_Lab/1/4519",
     "author": "Yury Molgachev",
     "image": ""
@@ -12,7 +12,7 @@
     "id": "mp4-video",
     "title": "Радиологический плеер для сайта",
     "description": "Способ преобразования dicom-серий в mp4-video для web-демонстрации с помощью кастомного плеера",
-    "category": "Dicom",
+    "category": "DICOM и визуализация",
     "url": "https://radiographia.github.io/ai/#player",
     "author": "Yury Molgachev",
     "image": ""
@@ -21,7 +21,7 @@
     "id": "dictophone",
     "title": "Локальный диктовщик для радиологов",
     "description": "Локальный диктовщик на русском для радиологов",
-    "category": "dictation",
+    "category": "Голосовой ввод и диктовка",
     "url": "https://t.me/radvibelab/18", 
     "author": "Roman (@alterdoctor)",
     "image": ""
@@ -30,9 +30,18 @@
     "id": "editors",
     "title": "Текстовые редакторы для врачей",
     "description": "Быстрые и легкие текстовые редакторы с шаблонами, автозаменами и Intellisense-дополнениями",
-    "category": "Editors",
+    "category": "Интерфейсы и редакторы",
     "url": "https://t.me/Radiology_AI_Lab/4025/4895",
     "author": "Yury Molgachev",
     "image": ""
+  },
+  {
+    "id": "protocol-former",
+    "title": "Protocol Former",
+    "description": "Плагин для программы Obsidian, который помогает врачу-рентгенологу выполнять структурированные протоколы исследования прямо в рабочем хранилище. Плагин превращает протокол в пошаговый клинический сценарий: выберите нужную ветку, вставьте готовый текст или сниппет, повторите раздел для нескольких находок и добавьте сформированный текст в заметку, к которой привязана сессия",
+    "category": "Интерфейсы и редакторы",
+    "url": "https://github.com/vegacepticon/protocol-former/blob/main/README.ru.md",
+    "author": "Roman (@alterdoctor)",
+    "image": ""
   }
-]
+][cite: 1]
