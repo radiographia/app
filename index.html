@@ -2,36 +2,490 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f4f7fb">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0d1117">
   <meta name="description" content="Каталог авторских инструментов для врачебной диктовки и подготовки медицинских документов.">
   <title>Врачебный диктовщик — каталог проектов</title>
-  <link rel="stylesheet" href="./css/style.css">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="./js/app.js" defer></script>
+  <style>
+    /* ========== Базовая тёмная тема ========== */
+    :root {
+      --bg: #0d1117;
+      --surface: #151b26;
+      --surface-2: #1a2230;
+      --border: rgba(255,255,255,.07);
+      --border-strong: rgba(255,255,255,.14);
+      --text: #e6edf3;
+      --text-dim: #9aa7b8;
+      --text-faint: #6b7787;
+      --accent: #77a9ed;
+      --radius: 16px;
+      --radius-sm: 10px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", "Roboto", sans-serif;
+      color-scheme: dark;
+      color: var(--text);
+      background: var(--bg);
+      font-synthesis: none;
+      -webkit-text-size-adjust: 100%;
+      -webkit-tap-highlight-color: transparent;
+    }
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(1200px 480px at 85% -10%, rgba(86,140,232,.08), transparent 60%),
+        radial-gradient(900px 380px at 0% 0%, rgba(139,127,232,.06), transparent 55%),
+        var(--bg);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { width: min(100% - 28px, 920px); margin-inline: auto; }
+
+    /* ========== Цветовые подтемы этапов ==========
+       Спектр от «сырого/холодного» (PoC) к «зрелому/тёплому» (Продукт),
+       все в приглушённых полутонах, чтобы гармонировать с тёмной базой. */
+    [data-stage="poc"]     { --ac:#8b7fe8; --ac-soft:rgba(139,127,232,.13); --ac-text:#b8aef2; --ac-border:rgba(139,127,232,.38); }
+    [data-stage="proto"]   { --ac:#56b6d4; --ac-soft:rgba(86,182,212,.13);  --ac-text:#8ed0e4; --ac-border:rgba(86,182,212,.38); }
+    [data-stage="mvp"]     { --ac:#4fae8f; --ac-soft:rgba(79,174,143,.13);  --ac-text:#82cab0; --ac-border:rgba(79,174,143,.38); }
+    [data-stage="pilot"]   { --ac:#d4a256; --ac-soft:rgba(212,162,86,.13);  --ac-text:#e3bd86; --ac-border:rgba(212,162,86,.38); }
+    [data-stage="product"] { --ac:#d96e6e; --ac-soft:rgba(217,110,110,.13); --ac-text:#e89a9a; --ac-border:rgba(217,110,110,.38); }
+
+    /* ========== Hero ========== */
+    .hero {
+      padding: 30px 0 22px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(36,95,158,.10), transparent);
+    }
+    .eyebrow {
+      color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: .14em;
+      text-transform: uppercase; margin: 0 0 8px;
+    }
+    h1 { margin: 0 0 8px; font-size: clamp(26px, 6vw, 38px); line-height: 1.1; letter-spacing: -.01em; font-weight: 700; }
+    .subtitle { max-width: 620px; color: var(--text-dim); font-size: 15px; line-height: 1.6; margin: 0; }
+
+    /* ========== Заголовки секций ========== */
+    .section-title {
+      display: flex; align-items: center; gap: 8px;
+      margin: 24px 0 10px;
+      font-size: 12px; font-weight: 700; letter-spacing: .10em; text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .section-title .hint {
+      margin-left: auto; font-weight: 500; color: var(--text-faint);
+      text-transform: none; letter-spacing: 0; font-size: 12px;
+    }
+
+    /* ========== Чипы этапов (быстрый фильтр + мини-легенда) ========== */
+    .stage-chips { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 6px; scrollbar-width: none; }
+    .stage-chips::-webkit-scrollbar { display: none; }
+    .stage-chip {
+      flex: 0 0 auto; display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 13px; border: 1px solid var(--border-strong);
+      border-radius: 999px; background: var(--surface); color: var(--text-dim);
+      font: inherit; font-size: 13px; cursor: pointer; white-space: nowrap;
+      transition: all .15s ease;
+    }
+    .stage-chip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ac); box-shadow: 0 0 6px var(--ac); }
+    .stage-chip:hover { color: var(--text); background: var(--surface-2); }
+    .stage-chip[aria-pressed="true"] {
+      color: #fff; background: var(--ac-soft); border-color: var(--ac-border);
+      box-shadow: 0 0 0 1px var(--ac-border) inset;
+    }
+
+    /* ========== Раскрываемая легенда с пояснениями ========== */
+    .legend-details {
+      margin: 4px 0 6px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); overflow: hidden;
+    }
+    .legend-details summary {
+      list-style: none; cursor: pointer; padding: 12px 14px;
+      font-size: 13px; font-weight: 600; color: var(--text);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .legend-details summary::-webkit-details-marker { display: none; }
+    .legend-details summary::after {
+      content: "▾"; margin-left: auto; color: var(--text-faint); font-size: 12px; transition: transform .2s;
+    }
+    .legend-details[open] summary::after { transform: rotate(180deg); }
+    .legend { display: flex; flex-direction: column; gap: 8px; padding: 0 12px 12px; }
+    .legend-row {
+      display: grid; grid-template-columns: 4px 1fr auto; gap: 12px; align-items: stretch;
+      padding: 11px 12px 11px 10px; background: var(--surface-2);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      cursor: pointer; transition: background .15s ease, border-color .15s ease;
+      text-align: left; color: inherit; font: inherit; width: 100%;
+    }
+    .legend-row:hover { border-color: var(--ac-border); }
+    .legend-row[aria-pressed="true"] {
+      background: var(--ac-soft); border-color: var(--ac-border);
+      box-shadow: 0 0 0 1px var(--ac-border) inset;
+    }
+    .legend-bar { width: 4px; border-radius: 4px; background: var(--ac); box-shadow: 0 0 8px var(--ac); }
+    .legend-body { min-width: 0; }
+    .legend-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+    .legend-name { font-weight: 700; color: var(--ac-text); font-size: 14px; }
+    .legend-purpose { color: var(--text); font-size: 13px; opacity: .9; }
+    .legend-meta { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 5px; font-size: 12px; color: var(--text-faint); }
+    .legend-meta b { color: var(--text-dim); font-weight: 600; }
+    .legend-meta .sep { opacity: .5; padding: 0 2px; }
+    .legend-dots { display: flex; gap: 4px; align-self: center; }
+    .legend-dots .d { width: 7px; height: 7px; border-radius: 50%; background: var(--border-strong); }
+    .legend-dots .d.on { background: var(--ac); box-shadow: 0 0 5px var(--ac); }
+
+    /* ========== Фильтры (поиск + категории) ========== */
+    .filters { display: flex; flex-direction: column; gap: 10px; margin: 4px 0; }
+    .search-label { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); }
+    .search {
+      width: 100%; padding: 13px 14px; border: 1px solid var(--border-strong);
+      border-radius: 12px; background: var(--surface); color: var(--text); font: inherit;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    .search::placeholder { color: var(--text-faint); }
+    .search:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(119,169,237,.2); }
+
+    .active-stage {
+      display: none; align-items: center; gap: 8px; align-self: flex-start;
+      padding: 7px 12px; border-radius: 999px; background: var(--ac-soft);
+      border: 1px solid var(--ac-border); color: var(--ac-text);
+      font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+    .active-stage.show { display: inline-flex; }
+    .active-stage .x { opacity: .7; font-weight: 400; }
+
+    .categories { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 4px; scrollbar-width: none; }
+    .categories::-webkit-scrollbar { display: none; }
+    .category {
+      flex: 0 0 auto; padding: 8px 14px; border: 1px solid var(--border-strong);
+      border-radius: 999px; background: var(--surface); color: var(--text-dim);
+      font: inherit; font-size: 14px; cursor: pointer; white-space: nowrap; transition: all .15s ease;
+    }
+    .category:hover { color: var(--text); background: var(--surface-2); }
+    .category[aria-pressed="true"] { color: #fff; background: #2f6fbf; border-color: #2f6fbf; }
+
+    /* ========== Каталог проектов ========== */
+    .status { color: var(--text-faint); font-size: 13px; margin: 16px 0 6px; }
+    .projects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 8px 0 36px; }
+
+    .card {
+      display: flex; flex-direction: column; min-width: 0;
+      padding: 16px; border: 1px solid var(--border); border-radius: var(--radius);
+      background: linear-gradient(180deg, var(--ac-soft), var(--surface) 42%);
+      box-shadow: 0 6px 22px rgba(0,0,0,.25);
+      position: relative; overflow: hidden;
+      transition: transform .12s ease, border-color .15s ease, box-shadow .15s ease;
+    }
+    .card::before {
+      content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+      background: linear-gradient(180deg, var(--ac), transparent 80%);
+    }
+    .card:hover { transform: translateY(-2px); border-color: var(--ac-border); box-shadow: 0 10px 28px rgba(0,0,0,.32); }
+    .top-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+    .tag {
+      color: var(--ac-text); font-size: 10px; font-weight: 700; letter-spacing: .06em;
+      text-transform: uppercase; padding: 4px 8px; border-radius: 6px;
+      background: var(--ac-soft); border: 1px solid var(--ac-border);
+      max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .stage-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--ac-text); }
+    .stage-badge .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ac); box-shadow: 0 0 8px var(--ac); }
+    .progress { display: flex; gap: 4px; margin: 2px 0 12px; }
+    .progress .p { flex: 1; height: 4px; border-radius: 4px; background: var(--border-strong); }
+    .progress .p.on { background: var(--ac); }
+    .card h2 { margin: 2px 0 8px; font-size: 18px; line-height: 1.3; font-weight: 700; }
+    .description { color: var(--text-dim); font-size: 14px; line-height: 1.55; overflow-wrap: anywhere; margin: 0; }
+    .project-image { width: 100%; max-height: 170px; margin-bottom: 12px; border-radius: var(--radius-sm); object-fit: cover; }
+    .card-footer { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--border); }
+    .author { color: var(--text-faint); font-size: 12px; margin: 0 0 10px; }
+    .project-link {
+      display: inline-flex; align-items: center; gap: 4px;
+      color: var(--ac-text); font-weight: 650; font-size: 14px; text-decoration: none;
+      padding: 8px 14px; border-radius: 999px; background: var(--ac-soft); border: 1px solid var(--ac-border);
+      transition: background .15s ease, transform .1s ease;
+    }
+    .project-link:hover { background: var(--ac-border); }
+    .project-link:active { transform: scale(.98); }
+
+    .empty { color: var(--text-faint); padding: 40px 0; text-align: center; font-size: 14px; }
+
+    /* ========== Подвал ========== */
+    footer {
+      padding: 18px 0 36px; border-top: 1px solid var(--border); color: var(--text-faint);
+      font-size: 13px; line-height: 1.55;
+    }
+    footer p { margin: 6px 0; }
+
+    @media (max-width: 600px) {
+      .hero { padding: 24px 0 18px; }
+      .projects { grid-template-columns: 1fr; }
+      .card { padding: 14px; }
+      .legend-meta { font-size: 11px; }
+    }
+  </style>
 </head>
 <body>
   <header class="hero">
     <div class="container">
-      <p class="eyebrow">КАТАЛОГ АВТОРСКИХ РАЗРАБОТОК</p>
+      <p class="eyebrow">Каталог авторских разработок</p>
       <h1>Врачебные программы</h1>
-      <p class="subtitle">Инструменты для медицинской диктовки, обработки текста и подготовки документов.</p>
+      <p class="subtitle">Инструменты для медицинской диктовки, обработки текста и подготовки документов. Цвет карточки показывает, на каком этапе развития находится проект.</p>
     </div>
   </header>
 
   <main class="container">
-    <label class="search-label" for="search">Найти проект</label>
-    <input id="search" class="search" type="search" placeholder="Название, описание или категория">
+    <!-- Быстрый фильтр по этапам (он же мини-легенда цветов) -->
+    <h2 class="section-title">Этапы развития <span class="hint">нажмите, чтобы отфильтровать</span></h2>
+    <nav id="stageChips" class="stage-chips" aria-label="Фильтр по этапу развития"></nav>
 
-    <nav id="categories" class="categories" aria-label="Категории"></nav>
+    <!-- Раскрываемая легенда с полными пояснениями -->
+    <details class="legend-details" open>
+      <summary>Что означает каждый цвет?</summary>
+      <div id="legend" class="legend" aria-label="Легенда этапов"></div>
+    </details>
+
+    <!-- Поиск и фильтр по категориям -->
+    <div class="filters">
+      <label class="search-label" for="search">Найти проект</label>
+      <input id="search" class="search" type="search" placeholder="Название, описание или категория">
+      <button id="activeStage" class="active-stage" type="button">
+        <span class="lbl"></span><span class="x">✕ сбросить этап</span>
+      </button>
+      <nav id="categories" class="categories" aria-label="Категории"></nav>
+    </div>
+
     <p id="status" class="status" role="status">Загрузка каталога…</p>
     <section id="projects" class="projects" aria-label="Проекты"></section>
 
     <footer>
-      Каталог авторских инструментов для врачей. Для размещения карточек ваших предложений обращайтесь в личку @vincent_vist (Юрий).
-	  <p>  <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=d7b0db8045197cb145e0db4b33088e4db3b7f06d'></script>
-<script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1672122/t/5"></script></p>
+      <p>Каталог авторских инструментов для врачей. Для размещения карточек ваших предложений обращайтесь в личку @vincent_vist (Юрий).</p>
     </footer>
   </main>
+
+  <script>
+    /* ===== Этапы развития (порядок = зрелость) ===== */
+    const STAGES = [
+      { id:"poc",     order:1, name:"PoC",      purpose:"Проверить, работает ли технология в принципе",           code:"Да (черновой)",          audience:"Только разработчики" },
+      { id:"proto",   order:2, name:"Прототип", purpose:"Проверить дизайн, логику экранов и удобство",            code:"Нет (только макеты)",     audience:"Команда, заказчики, фокус-группа" },
+      { id:"mvp",     order:3, name:"MVP",       purpose:"Проверить спрос и бизнес-модель на рынке",              code:"Да (базовый)",            audience:"Первые реальные пользователи" },
+      { id:"pilot",   order:4, name:"Пилот",    purpose:"Проверить работу системы в реальных бизнес-процессах",  code:"Да (стабильный)",         audience:"Ограниченная группа клиентов или филиал" },
+      { id:"product", order:5, name:"Продукт",  purpose:"Масштабирование и получение стабильной прибыли",       code:"Продакшен",               audience:"Широкий рынок" }
+    ];
+    const stageById = id => STAGES.find(s => s.id === id) || STAGES[0];
+
+    /* ===== Каталог проектов (поле stage задаёт цветовую тему карточки) ===== */
+    const PROJECTS = [
+      { id:"demo-dictation", stage:"poc", title:"Медицинская диктовка",
+        description:"Пример диктовки с помощью GigaAM в редакторе Word с установленным плагином ChatGPT для нормализации текста.",
+        category:"Голосовой ввод и диктовка",
+        url:"https://t.me/Radiology_AI_Lab/1/4519", author:"Yury Molgachev", image:"" },
+      { id:"mp4-video", stage:"proto", title:"Радиологический плеер для сайта",
+        description:"Способ преобразования dicom-серий в mp4-video для web-демонстрации с помощью кастомного плеера.",
+        category:"DICOM и визуализация",
+        url:"https://radiographia.github.io/ai/#player", author:"Yury Molgachev", image:"" },
+      { id:"dictophone", stage:"mvp", title:"Локальный диктовщик для радиологов",
+        description:"Локальный диктовщик на русском для радиологов — работает на машине врача без отправки данных в облако.",
+        category:"Голосовой ввод и диктовка",
+        url:"https://t.me/radvibelab/18", author:"Roman (@alterdoctor)", image:"" },
+      { id:"editors", stage:"pilot", title:"Текстовые редакторы для врачей",
+        description:"Быстрые и лёгкие текстовые редакторы с шаблонами, автозаменами и Intellisense-дополнениями.",
+        category:"Интерфейсы и редакторы",
+        url:"https://t.me/Radiology_AI_Lab/4025/4895", author:"Yury Molgachev", image:"" },
+      { id:"protocol-former", stage:"product", title:"Protocol Former",
+        description:"Плагин для Obsidian, который помогает врачу-рентгенологу выполнять структурированные протоколы исследования прямо в рабочем хранилище. Превращает протокол в пошаговый клинический сценарий.",
+        category:"Интерфейсы и редакторы",
+        url:"https://github.com/vegacepticon/protocol-former/blob/main/README.ru.md", author:"@Roman_Shulgha", image:"" }
+    ];
+
+    /* ===== DOM ===== */
+    const stageChipsRoot = document.querySelector("#stageChips");
+    const legendRoot = document.querySelector("#legend");
+    const projectsRoot = document.querySelector("#projects");
+    const categoriesRoot = document.querySelector("#categories");
+    const searchInput = document.querySelector("#search");
+    const status = document.querySelector("#status");
+    const activeStageBtn = document.querySelector("#activeStage");
+
+    let activeCategory = "Все";
+    let activeStage = null; // null = показать все этапы
+
+    function el(tag, className, text) {
+      const n = document.createElement(tag);
+      if (className) n.className = className;
+      if (text !== undefined) n.textContent = text;
+      return n;
+    }
+
+    /* ===== Чипы этапов (быстрый фильтр) ===== */
+    function renderStageChips() {
+      stageChipsRoot.replaceChildren();
+      for (const s of STAGES) {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "stage-chip";
+        chip.dataset.stage = s.id;
+        chip.setAttribute("aria-pressed", String(activeStage === s.id));
+        chip.append(el("span", "dot"), document.createTextNode(s.name));
+        chip.addEventListener("click", () => toggleStage(s.id));
+        stageChipsRoot.append(chip);
+      }
+    }
+
+    /* ===== Легенда с пояснениями (тоже кликабельна) ===== */
+    function renderLegend() {
+      legendRoot.replaceChildren();
+      for (const s of STAGES) {
+        const row = document.createElement("button");
+        row.type = "button";
+        row.className = "legend-row";
+        row.dataset.stage = s.id;
+        row.setAttribute("aria-pressed", String(activeStage === s.id));
+
+        row.append(el("span", "legend-bar"));
+
+        const body = el("div", "legend-body");
+        const head = el("div", "legend-head");
+        head.append(el("span", "legend-name", s.name));
+        head.append(el("span", "legend-purpose", s.purpose));
+        body.append(head);
+
+        const meta = el("div", "legend-meta");
+        meta.append(el("b", "", "Код:"), document.createTextNode(" " + s.code));
+        meta.append(el("span", "sep", "•"));
+        meta.append(el("b", "", "Аудитория:"), document.createTextNode(" " + s.audience));
+        body.append(meta);
+        row.append(body);
+
+        const dots = el("div", "legend-dots");
+        for (let i = 1; i <= 5; i++) dots.append(el("span", i <= s.order ? "d on" : "d"));
+        row.append(dots);
+
+        row.addEventListener("click", () => toggleStage(s.id));
+        legendRoot.append(row);
+      }
+    }
+
+    function toggleStage(id) {
+      activeStage = activeStage === id ? null : id;
+      renderStageChips();
+      renderLegend();
+      renderActiveStage();
+      renderProjects();
+    }
+
+    function renderActiveStage() {
+      if (!activeStage) { activeStageBtn.classList.remove("show"); return; }
+      const s = stageById(activeStage);
+      activeStageBtn.classList.add("show");
+      activeStageBtn.dataset.stage = s.id;
+      activeStageBtn.querySelector(".lbl").textContent = "Этап: " + s.name;
+    }
+    activeStageBtn.addEventListener("click", () => {
+      activeStage = null;
+      renderStageChips(); renderLegend(); renderActiveStage(); renderProjects();
+    });
+
+    /* ===== Категории ===== */
+    function renderCategories() {
+      categoriesRoot.replaceChildren();
+      const names = ["Все", ...new Set(PROJECTS.map(p => p.category).filter(Boolean))];
+      for (const name of names) {
+        const b = el("button", "category", name);
+        b.type = "button";
+        b.setAttribute("aria-pressed", String(name === activeCategory));
+        b.addEventListener("click", () => {
+          activeCategory = name; renderCategories(); renderProjects();
+        });
+        categoriesRoot.append(b);
+      }
+    }
+
+    /* ===== Проекты ===== */
+    function safeUrl(v) {
+      try { const u = new URL(v); return ["https:","http:"].includes(u.protocol) ? u.href : null; }
+      catch { return null; }
+    }
+
+    function renderProjects() {
+      const q = searchInput.value.trim().toLocaleLowerCase("ru");
+      const filtered = PROJECTS.filter(p => {
+        const searchable = [p.title, p.description, p.category, p.author].join(" ").toLocaleLowerCase("ru");
+        return (activeCategory === "Все" || p.category === activeCategory)
+          && (!activeStage || p.stage === activeStage)
+          && searchable.includes(q);
+      });
+
+      projectsRoot.replaceChildren();
+      for (const p of filtered) {
+        const card = el("article", "card");
+        card.dataset.stage = p.stage;
+        const s = stageById(p.stage);
+
+        if (p.image) {
+          const iu = safeUrl(p.image);
+          if (iu) {
+            const img = el("img", "project-image");
+            img.src = iu; img.alt = ""; img.loading = "lazy";
+            img.addEventListener("error", () => img.remove(), { once: true });
+            card.append(img);
+          }
+        }
+
+        const top = el("div", "top-row");
+        top.append(el("span", "tag", p.category || "Проект"));
+        const badge = el("span", "stage-badge");
+        badge.append(el("span", "dot"), document.createTextNode(s.name));
+        top.append(badge);
+        card.append(top);
+
+        // Индикатор прогресса: 5 сегментов, закрашены до текущего этапа
+        const prog = el("div", "progress");
+        for (let i = 1; i <= 5; i++) prog.append(el("span", i <= s.order ? "p on" : "p"));
+        card.append(prog);
+
+        card.append(el("h2", "", p.title));
+        card.append(el("p", "description", p.description));
+
+        const footer = el("div", "card-footer");
+        footer.append(el("p", "author", "Автор: " + (p.author || "не указан")));
+        const url = safeUrl(p.url);
+        if (url) {
+          const link = el("a", "project-link", "Открыть проект");
+          link.href = url; link.target = "_blank"; link.rel = "noopener noreferrer";
+          link.append(document.createTextNode(" ↗"));
+          footer.append(link);
+        }
+        card.append(footer);
+        projectsRoot.append(card);
+      }
+
+      if (!filtered.length) {
+        projectsRoot.replaceChildren(el("p", "empty", "По вашему запросу ничего не найдено."));
+      }
+
+      const stageLabel = activeStage ? " · этап: " + stageById(activeStage).name : "";
+      status.textContent = filtered.length
+        ? "Проектов: " + filtered.length + stageLabel
+        : "Ничего не найдено. Измените запрос или сбросьте фильтры.";
+    }
+
+    /* ===== Инициализация ===== */
+    function init() {
+      renderStageChips();
+      renderLegend();
+      renderActiveStage();
+      renderCategories();
+      renderProjects();
+
+      const tg = window.Telegram?.WebApp;
+      if (tg) {
+        tg.ready();
+        tg.expand();
+        try { tg.setHeaderColor("#0d1117"); } catch(e){}
+        try { tg.setBackgroundColor("#0d1117"); } catch(e){}
+      }
+    }
+    searchInput.addEventListener("input", renderProjects);
+    init();
+  </script>
 </body>
 </html>
