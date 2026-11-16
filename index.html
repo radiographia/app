@@ -3,261 +3,288 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0d1117">
+  <meta name="theme-color" content="#F9F9FE">
+  <meta name="color-scheme" content="light dark">
   <meta name="description" content="Каталог авторских инструментов для врачебной диктовки и подготовки медицинских документов.">
   <title>Врачебный диктовщик — каталог проектов</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
+    /* Тема выбирается до первой отрисовки: Telegram → системная → светлая */
+    (function () {
+      var tg = window.Telegram && window.Telegram.WebApp;
+      var inTg = tg && tg.platform && tg.platform !== "unknown";
+      var dark = inTg ? tg.colorScheme === "dark"
+                      : window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.dataset.theme = dark ? "dark" : "light";
+    })();
+  </script>
   <style>
-    /* ========== Базовая тёмная тема ========== */
+    /* =====================================================================
+       Material Design 3 — токены
+       Схема сгенерирована из seed #2F6FBF (HCT, tonal spot).
+       Этапы — отдельные тональные палитры: tone 40/90 (светлая) и 80/30 (тёмная).
+       ===================================================================== */
     :root {
-      --bg: #0d1117;
-      --surface: #151b26;
-      --surface-2: #1a2230;
-      --border: rgba(255,255,255,.07);
-      --border-strong: rgba(255,255,255,.14);
-      --text: #e6edf3;
-      --text-dim: #9aa7b8;
-      --text-faint: #6b7787;
-      --accent: #77a9ed;
-      --radius: 16px;
-      --radius-sm: 10px;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", "Roboto", sans-serif;
-      color-scheme: dark;
-      color: var(--text);
-      background: var(--bg);
-      font-synthesis: none;
+      color-scheme: light;
+      --primary: #45608A;            --on-primary: #F8F8FF;
+      --primary-container: #AFCAFB;  --on-primary-container: #26436B;
+      --secondary-container: #D9E3F8; --on-secondary-container: #485264;
+      --surface: #F9F9FE;            --on-surface: #2F323A;
+      --on-surface-variant: #5B5F68;
+      --surface-container-low: #F2F3FA;
+      --surface-container: #ECEDF6;
+      --surface-container-high: #E6E8F1;
+      --surface-container-highest: #DFE2EC;
+      --outline: #777B84;            --outline-variant: #AFB2BB;
+
+      /* Тональные палитры этапов: st = акцент, st-c = контейнер */
+      --poc-st:#5D549F;     --poc-on-st:#FFFFFF;     --poc-st-c:#E4DFFF;     --poc-on-st-c:#190959;
+      --proto-st:#00677E;   --proto-on-st:#FFFFFF;   --proto-st-c:#B5EBFF;   --proto-on-st-c:#001F28;
+      --mvp-st:#006C53;     --mvp-on-st:#FFFFFF;     --mvp-st-c:#8EF6D1;     --mvp-on-st-c:#002117;
+      --pilot-st:#815600;   --pilot-on-st:#FFFFFF;   --pilot-st-c:#FFDDB1;   --pilot-on-st-c:#291800;
+      --product-st:#984445; --product-on-st:#FFFFFF; --product-st-c:#FFDAD8; --product-on-st-c:#3F0208;
+
+      /* Формы */
+      --shape-xs: 4px; --shape-sm: 8px; --shape-md: 12px; --shape-lg: 16px; --shape-xl: 28px; --shape-full: 999px;
+
+      /* Типографика: системный стек (Roboto на Android, SF на iOS), без внешних шрифтов */
+      font-family: Roboto, "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
       -webkit-text-size-adjust: 100%;
       -webkit-tap-highlight-color: transparent;
+      font-synthesis: none;
     }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --primary: #B3C7ED;            --on-primary: #2D4160;
+      --primary-container: #3F5373;  --on-primary-container: #D6E4FF;
+      --secondary-container: #323C4D; --on-secondary-container: #B6C0D4;
+      --surface: #0C0E12;            --on-surface: #E2E5EF;
+      --on-surface-variant: #A8ABB4;
+      --surface-container-low: #111318;
+      --surface-container: #171A1F;
+      --surface-container-high: #1C2026;
+      --surface-container-highest: #22262D;
+      --outline: #72757E;            --outline-variant: #444850;
+
+      --poc-st:#C7BFFF;     --poc-on-st:#2E246E;     --poc-st-c:#453C86;     --poc-on-st-c:#E4DFFF;
+      --proto-st:#6DD4F5;   --proto-on-st:#003543;   --proto-st-c:#004E60;   --proto-on-st-c:#B5EBFF;
+      --mvp-st:#72D9B6;     --mvp-on-st:#00382A;     --mvp-st-c:#00513D;     --mvp-on-st-c:#8EF6D1;
+      --pilot-st:#FBBB57;   --pilot-on-st:#442B00;   --pilot-st-c:#614000;   --pilot-on-st-c:#FFDDB1;
+      --product-st:#FFB3B1; --product-on-st:#5D171B; --product-st-c:#7A2D2F; --product-on-st-c:#FFDAD8;
+    }
+    [data-stage="poc"]     { --st:var(--poc-st);     --on-st:var(--poc-on-st);     --st-c:var(--poc-st-c);     --on-st-c:var(--poc-on-st-c); }
+    [data-stage="proto"]   { --st:var(--proto-st);   --on-st:var(--proto-on-st);   --st-c:var(--proto-st-c);   --on-st-c:var(--proto-on-st-c); }
+    [data-stage="mvp"]     { --st:var(--mvp-st);     --on-st:var(--mvp-on-st);     --st-c:var(--mvp-st-c);     --on-st-c:var(--mvp-on-st-c); }
+    [data-stage="pilot"]   { --st:var(--pilot-st);   --on-st:var(--pilot-on-st);   --st-c:var(--pilot-st-c);   --on-st-c:var(--pilot-on-st-c); }
+    [data-stage="product"] { --st:var(--product-st); --on-st:var(--product-on-st); --st-c:var(--product-st-c); --on-st-c:var(--product-on-st-c); }
+
     * { box-sizing: border-box; }
-    html, body { min-height: 100%; }
+    html { background: var(--surface); }
     body {
-      margin: 0;
-      background:
-        radial-gradient(1200px 480px at 85% -10%, rgba(86,140,232,.08), transparent 60%),
-        radial-gradient(900px 380px at 0% 0%, rgba(139,127,232,.06), transparent 55%),
-        var(--bg);
-      line-height: 1.5;
+      margin: 0; min-height: 100vh;
+      background: var(--surface); color: var(--on-surface);
+      font-size: 16px; line-height: 24px; letter-spacing: .03125em;
       -webkit-font-smoothing: antialiased;
+      /* Безопасные зоны: вырезы, а также полноэкранный режим Telegram */
+      padding-top: max(env(safe-area-inset-top, 0px), calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px)));
+      padding-bottom: max(env(safe-area-inset-bottom, 0px), var(--tg-safe-area-inset-bottom, 0px));
     }
-    .container { width: min(100% - 28px, 920px); margin-inline: auto; }
+    .container {
+      width: min(100%, 880px); margin-inline: auto;
+      padding-inline: max(16px, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+    }
+    svg.i { width: 24px; height: 24px; fill: currentColor; flex: none; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-    /* ========== Цветовые подтемы этапов ==========
-       Спектр от «сырого/холодного» (PoC) к «зрелому/тёплому» (Продукт),
-       все в приглушённых полутонах, чтобы гармонировать с тёмной базой. */
-    [data-stage="poc"]     { --ac:#8b7fe8; --ac-soft:rgba(139,127,232,.13); --ac-text:#b8aef2; --ac-border:rgba(139,127,232,.38); }
-    [data-stage="proto"]   { --ac:#56b6d4; --ac-soft:rgba(86,182,212,.13);  --ac-text:#8ed0e4; --ac-border:rgba(86,182,212,.38); }
-    [data-stage="mvp"]     { --ac:#4fae8f; --ac-soft:rgba(79,174,143,.13);  --ac-text:#82cab0; --ac-border:rgba(79,174,143,.38); }
-    [data-stage="pilot"]   { --ac:#d4a256; --ac-soft:rgba(212,162,86,.13);  --ac-text:#e3bd86; --ac-border:rgba(212,162,86,.38); }
-    [data-stage="product"] { --ac:#d96e6e; --ac-soft:rgba(217,110,110,.13); --ac-text:#e89a9a; --ac-border:rgba(217,110,110,.38); }
+    /* ---------- State layer + ripple (общие для всех интерактивных элементов) ---------- */
+    .state { position: relative; overflow: hidden; isolation: isolate; cursor: pointer; }
+    .state::before {
+      content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit;
+      background: currentColor; opacity: 0; transition: opacity .15s;
+    }
+    @media (hover: hover) { .state:hover::before { opacity: .08; } }
+    .state:focus-visible::before, .state:active::before { opacity: .1; }
+    :focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+    .ripple {
+      position: absolute; z-index: -1; border-radius: 50%; background: currentColor; opacity: .12;
+      transform: scale(0); pointer-events: none; animation: ripple .5s ease-out forwards;
+    }
+    @keyframes ripple { to { transform: scale(1); opacity: 0; } }
 
-    /* ========== Hero ========== */
-    .hero {
-      padding: 30px 0 22px;
-      border-bottom: 1px solid var(--border);
-      background: linear-gradient(180deg, rgba(36,95,158,.10), transparent);
-    }
-    .eyebrow {
-      color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: .14em;
-      text-transform: uppercase; margin: 0 0 8px;
-    }
-    h1 { margin: 0 0 8px; font-size: clamp(26px, 6vw, 38px); line-height: 1.1; letter-spacing: -.01em; font-weight: 700; }
-    .subtitle { max-width: 620px; color: var(--text-dim); font-size: 15px; line-height: 1.6; margin: 0; }
+    /* ---------- Top: заголовок ---------- */
+    .hero { padding: 28px 0 16px; }
+    h1 { margin: 0 0 8px; font-size: 32px; line-height: 40px; font-weight: 400; letter-spacing: 0; color: var(--on-surface); }
+    .subtitle { margin: 0; max-width: 60ch; color: var(--on-surface-variant); font-size: 16px; line-height: 24px; }
 
-    /* ========== Заголовки секций ========== */
-    .section-title {
-      display: flex; align-items: center; gap: 8px;
-      margin: 24px 0 10px;
-      font-size: 12px; font-weight: 700; letter-spacing: .10em; text-transform: uppercase;
-      color: var(--text-dim);
+    /* ---------- Search bar ---------- */
+    .search-bar {
+      display: flex; align-items: center; gap: 4px; height: 56px; margin: 8px 0 16px;
+      padding: 0 4px 0 16px; border-radius: var(--shape-xl);
+      background: var(--surface-container-high); color: var(--on-surface-variant);
+      transition: box-shadow .15s, background .15s;
     }
-    .section-title .hint {
-      margin-left: auto; font-weight: 500; color: var(--text-faint);
-      text-transform: none; letter-spacing: 0; font-size: 12px;
+    .search-bar:focus-within { background: var(--surface-container-highest); box-shadow: 0 0 0 2px var(--primary); }
+    .search-bar input {
+      flex: 1; min-width: 0; height: 100%; padding: 0 8px; border: 0; outline: 0; background: transparent;
+      color: var(--on-surface); font: inherit; letter-spacing: .03125em;
     }
+    .search-bar input::placeholder { color: var(--on-surface-variant); opacity: 1; }
+    .search-bar input::-webkit-search-cancel-button { -webkit-appearance: none; display: none; }
+    .icon-btn {
+      display: grid; place-items: center; width: 48px; height: 48px; border: 0; padding: 0;
+      border-radius: var(--shape-full); background: transparent; color: var(--on-surface-variant);
+    }
+    .icon-btn[hidden] { display: none; }
 
-    /* ========== Чипы этапов (быстрый фильтр + мини-легенда) ========== */
-    .stage-chips { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 6px; scrollbar-width: none; }
-    .stage-chips::-webkit-scrollbar { display: none; }
-    .stage-chip {
-      flex: 0 0 auto; display: inline-flex; align-items: center; gap: 7px;
-      padding: 8px 13px; border: 1px solid var(--border-strong);
-      border-radius: 999px; background: var(--surface); color: var(--text-dim);
-      font: inherit; font-size: 13px; cursor: pointer; white-space: nowrap;
-      transition: all .15s ease;
+    /* ---------- Filter chips ---------- */
+    .group-label { margin: 16px 0 8px; font-size: 14px; line-height: 20px; font-weight: 500; letter-spacing: .007em; color: var(--on-surface-variant); }
+    .chips { display: flex; gap: 8px; margin-inline: -16px; padding: 2px 16px 4px; overflow-x: auto; scrollbar-width: none; }
+    .chips::-webkit-scrollbar { display: none; }
+    .chip {
+      flex: none; display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 16px;
+      border: 1px solid var(--outline); border-radius: var(--shape-sm);
+      background: transparent; color: var(--on-surface-variant);
+      font: inherit; font-size: 14px; line-height: 20px; font-weight: 500; letter-spacing: .007em; white-space: nowrap;
     }
-    .stage-chip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ac); box-shadow: 0 0 6px var(--ac); }
-    .stage-chip:hover { color: var(--text); background: var(--surface-2); }
-    .stage-chip[aria-pressed="true"] {
-      color: #fff; background: var(--ac-soft); border-color: var(--ac-border);
-      box-shadow: 0 0 0 1px var(--ac-border) inset;
-    }
+    .chip .lead { display: none; width: 18px; height: 18px; }
+    .chip .check { fill: currentColor; }
+    .chip .dot { display: none; width: 10px; height: 10px; margin-inline: 4px; border-radius: 50%; background: var(--st); }
+    .chip[data-stage] .dot { display: block; }
+    .chip[aria-pressed="true"] { padding-left: 8px; border-color: transparent; background: var(--secondary-container); color: var(--on-secondary-container); }
+    .chip[data-stage][aria-pressed="true"] { background: var(--st-c); color: var(--on-st-c); }
+    .chip[aria-pressed="true"] .check { display: block; }
+    .chip[aria-pressed="true"] .dot { display: none; }
+    .chip:not([data-stage]):not([aria-pressed="true"]) { padding-left: 16px; }
+    .chip[data-stage]:not([aria-pressed="true"]) { padding-left: 12px; }
 
-    /* ========== Раскрываемая легенда с пояснениями ========== */
-    .legend-details {
-      margin: 4px 0 6px; background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-sm); overflow: hidden;
-    }
+    /* ---------- Легенда этапов (раскрывающаяся) ---------- */
+    .legend-details { margin: 12px 0 4px; border-radius: var(--shape-lg); background: var(--surface-container-low); border: 1px solid var(--outline-variant); overflow: hidden; }
     .legend-details summary {
-      list-style: none; cursor: pointer; padding: 12px 14px;
-      font-size: 13px; font-weight: 600; color: var(--text);
-      display: flex; align-items: center; gap: 8px;
+      display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 0 16px; list-style: none;
+      font-size: 16px; line-height: 24px; font-weight: 500; letter-spacing: .009em; color: var(--on-surface);
     }
     .legend-details summary::-webkit-details-marker { display: none; }
-    .legend-details summary::after {
-      content: "▾"; margin-left: auto; color: var(--text-faint); font-size: 12px; transition: transform .2s;
-    }
-    .legend-details[open] summary::after { transform: rotate(180deg); }
-    .legend { display: flex; flex-direction: column; gap: 8px; padding: 0 12px 12px; }
+    .legend-details summary .grow { flex: 1; }
+    .legend-details summary svg { color: var(--on-surface-variant); transition: transform .2s; }
+    .legend-details[open] summary svg { transform: rotate(180deg); }
+    .legend { display: flex; flex-direction: column; gap: 4px; padding: 0 8px 8px; }
     .legend-row {
-      display: grid; grid-template-columns: 4px 1fr auto; gap: 12px; align-items: stretch;
-      padding: 11px 12px 11px 10px; background: var(--surface-2);
-      border: 1px solid var(--border); border-radius: var(--radius-sm);
-      cursor: pointer; transition: background .15s ease, border-color .15s ease;
-      text-align: left; color: inherit; font: inherit; width: 100%;
+      display: grid; grid-template-columns: 40px 1fr 24px; gap: 16px; align-items: start; width: 100%;
+      padding: 12px 12px 12px 8px; border: 0; border-radius: var(--shape-md);
+      background: transparent; color: var(--on-surface); font: inherit; text-align: left;
     }
-    .legend-row:hover { border-color: var(--ac-border); }
-    .legend-row[aria-pressed="true"] {
-      background: var(--ac-soft); border-color: var(--ac-border);
-      box-shadow: 0 0 0 1px var(--ac-border) inset;
+    .legend-row[aria-pressed="true"] { background: var(--st-c); color: var(--on-st-c); }
+    .legend-num {
+      display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%;
+      background: var(--st-c); color: var(--on-st-c); font-size: 16px; font-weight: 500;
     }
-    .legend-bar { width: 4px; border-radius: 4px; background: var(--ac); box-shadow: 0 0 8px var(--ac); }
-    .legend-body { min-width: 0; }
-    .legend-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
-    .legend-name { font-weight: 700; color: var(--ac-text); font-size: 14px; }
-    .legend-purpose { color: var(--text); font-size: 13px; opacity: .9; }
-    .legend-meta { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 5px; font-size: 12px; color: var(--text-faint); }
-    .legend-meta b { color: var(--text-dim); font-weight: 600; }
-    .legend-meta .sep { opacity: .5; padding: 0 2px; }
-    .legend-dots { display: flex; gap: 4px; align-self: center; }
-    .legend-dots .d { width: 7px; height: 7px; border-radius: 50%; background: var(--border-strong); }
-    .legend-dots .d.on { background: var(--ac); box-shadow: 0 0 5px var(--ac); }
+    .legend-row[aria-pressed="true"] .legend-num { background: var(--st); color: var(--on-st); }
+    .legend-name { display: block; font-size: 16px; line-height: 24px; font-weight: 500; letter-spacing: .009em; }
+    .legend-purpose { display: block; font-size: 14px; line-height: 20px; letter-spacing: .018em; color: var(--on-surface); }
+    .legend-meta { display: block; margin-top: 6px; font-size: 13px; line-height: 18px; letter-spacing: .025em; color: var(--on-surface-variant); }
+    .legend-meta b { font-weight: 500; color: var(--on-surface); }
+    .legend-row[aria-pressed="true"] .legend-purpose,
+    .legend-row[aria-pressed="true"] .legend-meta,
+    .legend-row[aria-pressed="true"] .legend-meta b { color: var(--on-st-c); }
+    .legend-row .check { display: none; align-self: center; }
+    .legend-row[aria-pressed="true"] .check { display: block; }
 
-    /* ========== Фильтры (поиск + категории) ========== */
-    .filters { display: flex; flex-direction: column; gap: 10px; margin: 4px 0; }
-    .search-label { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); }
-    .search {
-      width: 100%; padding: 13px 14px; border: 1px solid var(--border-strong);
-      border-radius: 12px; background: var(--surface); color: var(--text); font: inherit;
-      transition: border-color .15s ease, box-shadow .15s ease;
-    }
-    .search::placeholder { color: var(--text-faint); }
-    .search:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(119,169,237,.2); }
-
-    .active-stage {
-      display: none; align-items: center; gap: 8px; align-self: flex-start;
-      padding: 7px 12px; border-radius: 999px; background: var(--ac-soft);
-      border: 1px solid var(--ac-border); color: var(--ac-text);
-      font-size: 13px; font-weight: 600; cursor: pointer;
-    }
-    .active-stage.show { display: inline-flex; }
-    .active-stage .x { opacity: .7; font-weight: 400; }
-
-    .categories { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 4px; scrollbar-width: none; }
-    .categories::-webkit-scrollbar { display: none; }
-    .category {
-      flex: 0 0 auto; padding: 8px 14px; border: 1px solid var(--border-strong);
-      border-radius: 999px; background: var(--surface); color: var(--text-dim);
-      font: inherit; font-size: 14px; cursor: pointer; white-space: nowrap; transition: all .15s ease;
-    }
-    .category:hover { color: var(--text); background: var(--surface-2); }
-    .category[aria-pressed="true"] { color: #fff; background: #2f6fbf; border-color: #2f6fbf; }
-
-    /* ========== Каталог проектов ========== */
-    .status { color: var(--text-faint); font-size: 13px; margin: 16px 0 6px; }
-    .projects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 8px 0 36px; }
+    /* ---------- Каталог ---------- */
+    .status { margin: 16px 0 12px; font-size: 14px; line-height: 20px; letter-spacing: .018em; color: var(--on-surface-variant); }
+    .projects { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 0 0 24px; }
+    @media (min-width: 640px) { .projects { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
     .card {
-      display: flex; flex-direction: column; min-width: 0;
-      padding: 16px; border: 1px solid var(--border); border-radius: var(--radius);
-      background: linear-gradient(180deg, var(--ac-soft), var(--surface) 42%);
-      box-shadow: 0 6px 22px rgba(0,0,0,.25);
-      position: relative; overflow: hidden;
-      transition: transform .12s ease, border-color .15s ease, box-shadow .15s ease;
+      display: flex; flex-direction: column; min-width: 0; padding: 16px;
+      border: 1px solid var(--outline-variant); border-radius: var(--shape-lg);
+      background: var(--surface-container-low); color: var(--on-surface);
     }
-    .card::before {
-      content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
-      background: linear-gradient(180deg, var(--ac), transparent 80%);
+    .project-image { width: 100%; max-height: 180px; margin-bottom: 16px; border-radius: var(--shape-md); object-fit: cover; }
+    .stage-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+    .stage-pill {
+      display: inline-flex; align-items: center; height: 28px; padding: 0 12px; border-radius: var(--shape-sm);
+      background: var(--st-c); color: var(--on-st-c); font-size: 14px; line-height: 20px; font-weight: 500; letter-spacing: .007em;
     }
-    .card:hover { transform: translateY(-2px); border-color: var(--ac-border); box-shadow: 0 10px 28px rgba(0,0,0,.32); }
-    .top-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
-    .tag {
-      color: var(--ac-text); font-size: 10px; font-weight: 700; letter-spacing: .06em;
-      text-transform: uppercase; padding: 4px 8px; border-radius: 6px;
-      background: var(--ac-soft); border: 1px solid var(--ac-border);
-      max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    }
-    .stage-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--ac-text); }
-    .stage-badge .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ac); box-shadow: 0 0 8px var(--ac); }
-    .progress { display: flex; gap: 4px; margin: 2px 0 12px; }
-    .progress .p { flex: 1; height: 4px; border-radius: 4px; background: var(--border-strong); }
-    .progress .p.on { background: var(--ac); }
-    .card h2 { margin: 2px 0 8px; font-size: 18px; line-height: 1.3; font-weight: 700; }
-    .description { color: var(--text-dim); font-size: 14px; line-height: 1.55; overflow-wrap: anywhere; margin: 0; }
-    .project-image { width: 100%; max-height: 170px; margin-bottom: 12px; border-radius: var(--radius-sm); object-fit: cover; }
-    .card-footer { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--border); }
-    .author { color: var(--text-faint); font-size: 12px; margin: 0 0 10px; }
-    .project-link {
-      display: inline-flex; align-items: center; gap: 4px;
-      color: var(--ac-text); font-weight: 650; font-size: 14px; text-decoration: none;
-      padding: 8px 14px; border-radius: 999px; background: var(--ac-soft); border: 1px solid var(--ac-border);
-      transition: background .15s ease, transform .1s ease;
-    }
-    .project-link:hover { background: var(--ac-border); }
-    .project-link:active { transform: scale(.98); }
+    .stage-count { font-size: 13px; line-height: 18px; letter-spacing: .025em; color: var(--on-surface-variant); }
+    .progress { display: flex; gap: 4px; margin-bottom: 16px; }
+    .progress .p { flex: 1; height: 4px; border-radius: 2px; background: var(--outline-variant); }
+    .progress .p.on { background: var(--st); }
+    .card h2 { margin: 0; font-size: 20px; line-height: 28px; font-weight: 500; letter-spacing: 0; color: var(--on-surface); }
+    .category { margin: 2px 0 8px; font-size: 14px; line-height: 20px; letter-spacing: .018em; color: var(--on-surface-variant); }
+    .description { margin: 0 0 16px; font-size: 16px; line-height: 24px; letter-spacing: .03125em; color: var(--on-surface); overflow-wrap: anywhere; }
+    .card-footer { margin-top: auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .author { margin: 0; min-width: 0; font-size: 13px; line-height: 18px; letter-spacing: .025em; color: var(--on-surface-variant); overflow-wrap: anywhere; }
 
-    .empty { color: var(--text-faint); padding: 40px 0; text-align: center; font-size: 14px; }
-
-    /* ========== Подвал ========== */
-    footer {
-      padding: 18px 0 36px; border-top: 1px solid var(--border); color: var(--text-faint);
-      font-size: 13px; line-height: 1.55;
+    /* Кнопки */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 0 24px 0 16px;
+      border: 0; border-radius: var(--shape-full); font: inherit; font-size: 14px; line-height: 20px; font-weight: 500;
+      letter-spacing: .007em; text-decoration: none; white-space: nowrap;
     }
-    footer p { margin: 6px 0; }
+    .btn svg.i { width: 18px; height: 18px; }
+    .btn-filled { background: var(--st, var(--primary)); color: var(--on-st, var(--on-primary)); }
+    .btn-tonal  { background: var(--secondary-container); color: var(--on-secondary-container); }
 
-    @media (max-width: 600px) {
-      .hero { padding: 24px 0 18px; }
-      .projects { grid-template-columns: 1fr; }
-      .card { padding: 14px; }
-      .legend-meta { font-size: 11px; }
+    .empty { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 32px 16px; text-align: center; }
+    .empty-title { margin: 0; font-size: 22px; line-height: 28px; color: var(--on-surface); }
+    .empty-text { margin: 0 0 8px; font-size: 14px; line-height: 20px; color: var(--on-surface-variant); }
+
+    /* ---------- Подвал ---------- */
+    footer { margin: 8px 0 32px; padding: 16px; border-radius: var(--shape-lg); background: var(--surface-container); }
+    footer p { margin: 0 0 12px; font-size: 14px; line-height: 20px; letter-spacing: .018em; color: var(--on-surface-variant); }
+    footer .btn { padding-left: 16px; }
+
+    @media (max-width: 380px) { h1 { font-size: 28px; line-height: 36px; } }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      .ripple { display: none; }
     }
   </style>
 </head>
 <body>
   <header class="hero">
     <div class="container">
-      <p class="eyebrow">Каталог авторских разработок</p>
       <h1>Врачебные программы</h1>
       <p class="subtitle">Инструменты для медицинской диктовки, обработки текста и подготовки документов. Цвет карточки показывает, на каком этапе развития находится проект.</p>
     </div>
   </header>
 
   <main class="container">
-    <!-- Быстрый фильтр по этапам (он же мини-легенда цветов) -->
-    <h2 class="section-title">Этапы развития <span class="hint">нажмите, чтобы отфильтровать</span></h2>
-    <nav id="stageChips" class="stage-chips" aria-label="Фильтр по этапу развития"></nav>
-
-    <!-- Раскрываемая легенда с полными пояснениями -->
-    <details class="legend-details" open>
-      <summary>Что означает каждый цвет?</summary>
-      <div id="legend" class="legend" aria-label="Легенда этапов"></div>
-    </details>
-
-    <!-- Поиск и фильтр по категориям -->
-    <div class="filters">
-      <label class="search-label" for="search">Найти проект</label>
-      <input id="search" class="search" type="search" placeholder="Название, описание или категория">
-      <button id="activeStage" class="active-stage" type="button">
-        <span class="lbl"></span><span class="x">✕ сбросить этап</span>
+    <!-- Поиск -->
+    <div class="search-bar">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <label class="sr-only" for="search">Найти проект</label>
+      <input id="search" type="search" placeholder="Найти проект" autocomplete="off" enterkeyhint="search">
+      <button id="clearSearch" class="icon-btn state" type="button" aria-label="Очистить поиск" hidden>
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
       </button>
-      <nav id="categories" class="categories" aria-label="Категории"></nav>
     </div>
 
-    <p id="status" class="status" role="status">Загрузка каталога…</p>
+    <!-- Фильтры -->
+    <p class="group-label" id="stageLabel">Этап развития</p>
+    <nav id="stageChips" class="chips" aria-labelledby="stageLabel"></nav>
+
+    <p class="group-label" id="catLabel">Категория</p>
+    <nav id="categories" class="chips" aria-labelledby="catLabel"></nav>
+
+    <!-- Легенда: по умолчанию свёрнута, чтобы не занимать первый экран -->
+    <details class="legend-details">
+      <summary class="state">
+        <span class="grow">Что означает каждый этап?</span>
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg>
+      </summary>
+      <div id="legend" class="legend"></div>
+    </details>
+
+    <p id="status" class="status" role="status" aria-live="polite">Загрузка каталога…</p>
     <section id="projects" class="projects" aria-label="Проекты"></section>
 
     <footer>
-      <p>Каталог авторских инструментов для врачей. Для размещения карточек ваших предложений обращайтесь в личку @vincent_vist (Юрий).</p>
+      <p>Каталог авторских инструментов для врачей. Чтобы разместить карточку своего проекта, напишите в личные сообщения.</p>
+      <a class="btn btn-tonal state" data-link href="https://t.me/vincent_vist" target="_blank" rel="noopener noreferrer">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        Написать Юрию (@vincent_vist)
+      </a>
     </footer>
   </main>
 
@@ -296,14 +323,31 @@
         url:"https://github.com/vegacepticon/protocol-former/blob/main/README.ru.md", author:"@Roman_Shulgha", image:"" }
     ];
 
+    /* ===== Иконки (Material Icons, inline SVG) ===== */
+    const ICON = {
+      check: "M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z",
+      open:  "M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"
+    };
+    const SVGNS = "http://www.w3.org/2000/svg";
+    function icon(path, cls = "i") {
+      const svg = document.createElementNS(SVGNS, "svg");
+      svg.setAttribute("viewBox", "0 0 24 24");
+      svg.setAttribute("class", cls);
+      svg.setAttribute("aria-hidden", "true");
+      const p = document.createElementNS(SVGNS, "path");
+      p.setAttribute("d", path);
+      svg.append(p);
+      return svg;
+    }
+
     /* ===== DOM ===== */
     const stageChipsRoot = document.querySelector("#stageChips");
     const legendRoot = document.querySelector("#legend");
     const projectsRoot = document.querySelector("#projects");
     const categoriesRoot = document.querySelector("#categories");
     const searchInput = document.querySelector("#search");
+    const clearSearch = document.querySelector("#clearSearch");
     const status = document.querySelector("#status");
-    const activeStageBtn = document.querySelector("#activeStage");
 
     let activeCategory = "Все";
     let activeStage = null; // null = показать все этапы
@@ -315,88 +359,101 @@
       return n;
     }
 
-    /* ===== Чипы этапов (быстрый фильтр) ===== */
-    function renderStageChips() {
-      stageChipsRoot.replaceChildren();
+    /* ===== Telegram: ссылки открываются средствами клиента ===== */
+    const tg = window.Telegram && window.Telegram.WebApp;
+    const inTelegram = !!(tg && tg.platform && tg.platform !== "unknown");
+
+    function openExternal(href) {
+      try {
+        const u = new URL(href);
+        if (u.hostname === "t.me" && tg.openTelegramLink) tg.openTelegramLink(u.href);
+        else tg.openLink(u.href);
+      } catch { window.open(href, "_blank", "noopener"); }
+    }
+    document.addEventListener("click", e => {
+      const a = e.target.closest("a[data-link]");
+      if (!a || !inTelegram) return;
+      e.preventDefault();
+      tg.HapticFeedback?.impactOccurred?.("light");
+      openExternal(a.href);
+    });
+
+    /* ===== Ripple ===== */
+    document.addEventListener("pointerdown", e => {
+      const host = e.target.closest(".state");
+      if (!host || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      const r = host.getBoundingClientRect();
+      const size = Math.hypot(Math.max(e.clientX - r.left, r.right - e.clientX), Math.max(e.clientY - r.top, r.bottom - e.clientY)) * 2;
+      const rip = el("span", "ripple");
+      rip.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - r.left - size / 2}px;top:${e.clientY - r.top - size / 2}px`;
+      host.append(rip);
+      rip.addEventListener("animationend", () => rip.remove(), { once: true });
+    });
+
+    /* ===== Фильтры: элементы создаются один раз, меняется только состояние ===== */
+    function makeChip(label, { stage } = {}) {
+      const chip = el("button", "chip state");
+      chip.type = "button";
+      if (stage) chip.dataset.stage = stage;
+      chip.append(el("span", "dot"), icon(ICON.check, "i lead check"), document.createTextNode(label));
+      return chip;
+    }
+
+    function buildStageChips() {
       for (const s of STAGES) {
-        const chip = document.createElement("button");
-        chip.type = "button";
-        chip.className = "stage-chip";
-        chip.dataset.stage = s.id;
-        chip.setAttribute("aria-pressed", String(activeStage === s.id));
-        chip.append(el("span", "dot"), document.createTextNode(s.name));
+        const chip = makeChip(s.name, { stage: s.id });
         chip.addEventListener("click", () => toggleStage(s.id));
         stageChipsRoot.append(chip);
       }
     }
 
-    /* ===== Легенда с пояснениями (тоже кликабельна) ===== */
-    function renderLegend() {
-      legendRoot.replaceChildren();
+    function buildLegend() {
       for (const s of STAGES) {
-        const row = document.createElement("button");
+        const row = el("button", "legend-row state");
         row.type = "button";
-        row.className = "legend-row";
         row.dataset.stage = s.id;
-        row.setAttribute("aria-pressed", String(activeStage === s.id));
 
-        row.append(el("span", "legend-bar"));
+        row.append(el("span", "legend-num", String(s.order)));
 
-        const body = el("div", "legend-body");
-        const head = el("div", "legend-head");
-        head.append(el("span", "legend-name", s.name));
-        head.append(el("span", "legend-purpose", s.purpose));
-        body.append(head);
-
-        const meta = el("div", "legend-meta");
-        meta.append(el("b", "", "Код:"), document.createTextNode(" " + s.code));
-        meta.append(el("span", "sep", "•"));
-        meta.append(el("b", "", "Аудитория:"), document.createTextNode(" " + s.audience));
+        const body = el("span", "legend-body");
+        body.append(el("span", "legend-name", s.name), el("span", "legend-purpose", s.purpose));
+        const meta = el("span", "legend-meta");
+        meta.append(el("b", "", "Код: "), document.createTextNode(s.code), document.createElement("br"),
+                    el("b", "", "Аудитория: "), document.createTextNode(s.audience));
         body.append(meta);
-        row.append(body);
-
-        const dots = el("div", "legend-dots");
-        for (let i = 1; i <= 5; i++) dots.append(el("span", i <= s.order ? "d on" : "d"));
-        row.append(dots);
+        row.append(body, icon(ICON.check, "i check"));
 
         row.addEventListener("click", () => toggleStage(s.id));
         legendRoot.append(row);
       }
     }
 
+    function buildCategories() {
+      const names = ["Все", ...new Set(PROJECTS.map(p => p.category).filter(Boolean))];
+      for (const name of names) {
+        const b = makeChip(name);
+        b.dataset.name = name;
+        b.addEventListener("click", () => { activeCategory = name; syncFilters(); renderProjects(); });
+        categoriesRoot.append(b);
+      }
+    }
+
+    function syncFilters() {
+      for (const c of stageChipsRoot.children) c.setAttribute("aria-pressed", String(c.dataset.stage === activeStage));
+      for (const r of legendRoot.children) r.setAttribute("aria-pressed", String(r.dataset.stage === activeStage));
+      for (const c of categoriesRoot.children) c.setAttribute("aria-pressed", String(c.dataset.name === activeCategory));
+    }
+
     function toggleStage(id) {
       activeStage = activeStage === id ? null : id;
-      renderStageChips();
-      renderLegend();
-      renderActiveStage();
+      tg?.HapticFeedback?.selectionChanged?.();
+      syncFilters();
       renderProjects();
     }
 
-    function renderActiveStage() {
-      if (!activeStage) { activeStageBtn.classList.remove("show"); return; }
-      const s = stageById(activeStage);
-      activeStageBtn.classList.add("show");
-      activeStageBtn.dataset.stage = s.id;
-      activeStageBtn.querySelector(".lbl").textContent = "Этап: " + s.name;
-    }
-    activeStageBtn.addEventListener("click", () => {
-      activeStage = null;
-      renderStageChips(); renderLegend(); renderActiveStage(); renderProjects();
-    });
-
-    /* ===== Категории ===== */
-    function renderCategories() {
-      categoriesRoot.replaceChildren();
-      const names = ["Все", ...new Set(PROJECTS.map(p => p.category).filter(Boolean))];
-      for (const name of names) {
-        const b = el("button", "category", name);
-        b.type = "button";
-        b.setAttribute("aria-pressed", String(name === activeCategory));
-        b.addEventListener("click", () => {
-          activeCategory = name; renderCategories(); renderProjects();
-        });
-        categoriesRoot.append(b);
-      }
+    function resetFilters() {
+      activeStage = null; activeCategory = "Все"; searchInput.value = ""; clearSearch.hidden = true;
+      syncFilters(); renderProjects();
     }
 
     /* ===== Проекты ===== */
@@ -430,28 +487,28 @@
           }
         }
 
-        const top = el("div", "top-row");
-        top.append(el("span", "tag", p.category || "Проект"));
-        const badge = el("span", "stage-badge");
-        badge.append(el("span", "dot"), document.createTextNode(s.name));
-        top.append(badge);
-        card.append(top);
+        const row = el("div", "stage-row");
+        row.append(el("span", "stage-pill", s.name), el("span", "stage-count", "Этап " + s.order + " из " + STAGES.length));
+        card.append(row);
 
-        // Индикатор прогресса: 5 сегментов, закрашены до текущего этапа
         const prog = el("div", "progress");
-        for (let i = 1; i <= 5; i++) prog.append(el("span", i <= s.order ? "p on" : "p"));
+        prog.setAttribute("aria-hidden", "true");
+        for (let i = 1; i <= STAGES.length; i++) prog.append(el("span", i <= s.order ? "p on" : "p"));
         card.append(prog);
 
         card.append(el("h2", "", p.title));
+        if (p.category) card.append(el("p", "category", p.category));
         card.append(el("p", "description", p.description));
 
         const footer = el("div", "card-footer");
         footer.append(el("p", "author", "Автор: " + (p.author || "не указан")));
         const url = safeUrl(p.url);
         if (url) {
-          const link = el("a", "project-link", "Открыть проект");
+          const link = el("a", "btn btn-filled state");
           link.href = url; link.target = "_blank"; link.rel = "noopener noreferrer";
-          link.append(document.createTextNode(" ↗"));
+          link.dataset.link = "";
+          link.setAttribute("aria-label", "Открыть проект «" + p.title + "»");
+          link.append(icon(ICON.open), document.createTextNode("Открыть"));
           footer.append(link);
         }
         card.append(footer);
@@ -459,32 +516,47 @@
       }
 
       if (!filtered.length) {
-        projectsRoot.replaceChildren(el("p", "empty", "По вашему запросу ничего не найдено."));
+        const empty = el("div", "empty");
+        empty.append(el("p", "empty-title", "Ничего не найдено"),
+                     el("p", "empty-text", "Измените запрос или сбросьте фильтры."));
+        const btn = el("button", "btn btn-tonal state", "Сбросить фильтры");
+        btn.type = "button";
+        btn.style.paddingLeft = "24px";
+        btn.addEventListener("click", resetFilters);
+        empty.append(btn);
+        projectsRoot.append(empty);
       }
 
-      const stageLabel = activeStage ? " · этап: " + stageById(activeStage).name : "";
-      status.textContent = filtered.length
-        ? "Проектов: " + filtered.length + stageLabel
-        : "Ничего не найдено. Измените запрос или сбросьте фильтры.";
+      status.textContent = "Проектов: " + filtered.length + (activeStage ? " (этап: " + stageById(activeStage).name + ")" : "");
+    }
+
+    /* ===== Тема Telegram ===== */
+    function applyTheme() {
+      const dark = inTelegram ? tg.colorScheme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.dataset.theme = dark ? "dark" : "light";
+      const surface = getComputedStyle(document.documentElement).getPropertyValue("--surface").trim();
+      document.querySelector('meta[name="theme-color"]').setAttribute("content", surface);
+      if (tg) {
+        try { tg.setHeaderColor(surface); } catch (e) {}
+        try { tg.setBackgroundColor(surface); } catch (e) {}
+        try { tg.setBottomBarColor?.(surface); } catch (e) {}
+      }
     }
 
     /* ===== Инициализация ===== */
     function init() {
-      renderStageChips();
-      renderLegend();
-      renderActiveStage();
-      renderCategories();
+      buildStageChips();
+      buildLegend();
+      buildCategories();
+      syncFilters();
       renderProjects();
 
-      const tg = window.Telegram?.WebApp;
-      if (tg) {
-        tg.ready();
-        tg.expand();
-        try { tg.setHeaderColor("#0d1117"); } catch(e){}
-        try { tg.setBackgroundColor("#0d1117"); } catch(e){}
-      }
+      if (tg) { tg.ready(); tg.expand(); tg.onEvent?.("themeChanged", applyTheme); }
+      matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => { if (!inTelegram) applyTheme(); });
+      applyTheme();
     }
-    searchInput.addEventListener("input", renderProjects);
+    searchInput.addEventListener("input", () => { clearSearch.hidden = !searchInput.value; renderProjects(); });
+    clearSearch.addEventListener("click", () => { searchInput.value = ""; clearSearch.hidden = true; renderProjects(); searchInput.focus(); });
     init();
   </script>
 </body>
